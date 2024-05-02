@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: flights-block2
+
+  datasource:
+    url: jdbc:postgresql://localhost:15432/flights
+    username: block2_user
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+

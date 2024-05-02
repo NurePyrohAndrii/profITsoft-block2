@@ -1,0 +1,38 @@
+version: '3.9'
+
+name: flights-block2
+
+services:
+  block2.db:
+    image: postgres:16.2
+    container_name: block2-db
+    environment:
+      POSTGRES_USER: block2_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: flights
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "books_db" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    ports:
+      - "15432:5432"
+    volumes:
+      - block2_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  block2.admin:
+    image: dpage/pgadmin4:7
+    container_name: block2-admin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    volumes:
+      - block2_pg_data:/var/lib/pgadmin
+
+volumes:
+  block2_db_data:
+  block2_pg_data:

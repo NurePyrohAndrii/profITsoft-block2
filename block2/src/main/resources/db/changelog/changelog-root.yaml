@@ -1,0 +1,134 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: ikew
+      changes:
+        - createTable:
+            tableName: airport
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: airport_code
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: city
+                  type: varchar(255)
+              - column:
+                  name: country
+                  type: varchar(255)
+              - column:
+                  name: timezone
+                  type: varchar(255)
+
+  - changeSet:
+      id: 2
+      author: ikew
+      changes:
+        - createTable:
+            tableName: flight
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: flight_number
+                  type: varchar(255)
+              - column:
+                  name: departure
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: destination
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: departure_time
+                  type: timestamp
+              - column:
+                  name: arrival_time
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: flight
+            baseColumnNames: departure
+            constraintName: fk_flight_departure
+            referencedTableName: airport
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: flight
+            baseColumnNames: destination
+            constraintName: fk_flight_destination
+            referencedTableName: airport
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 3
+      author: ikew
+      changes:
+        - createTable:
+            tableName: service
+            columns:
+              - column:
+                  name: service_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: service_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+  - changeSet:
+      id: 4
+      author: ikew
+      changes:
+        - createTable:
+            tableName: flight_service
+            columns:
+              - column:
+                  name: flight_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: service_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: flight_service
+            baseColumnNames: flight_id
+            constraintName: fk_flight_service_flight
+            referencedTableName: flight
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: flight_service
+            baseColumnNames: service_id
+            constraintName: fk_flight_service_service
+            referencedTableName: service
+            referencedColumnNames: service_id
+        - createIndex:
+            tableName: flight_service
+            columns:
+              - column:
+                  name: service_id
+            indexName: idx_service_id

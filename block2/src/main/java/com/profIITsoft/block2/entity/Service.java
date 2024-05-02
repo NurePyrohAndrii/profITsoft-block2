@@ -10,14 +10,17 @@ import lombok.*;
 @Table(name = "service")
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long serviceId;
+    private Long id;
 
-    @Column(name = "service_name", nullable = false, unique = true)
-    private String serviceName;
+    /**
+     * Name of the service provided by the airlines. Unique value.
+     */
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
+    private String description;
 }

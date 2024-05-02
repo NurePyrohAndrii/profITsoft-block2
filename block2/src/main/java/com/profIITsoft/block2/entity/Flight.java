@@ -1,7 +1,8 @@
 package com.profIITsoft.block2.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.Set;
@@ -13,23 +14,20 @@ import java.util.Set;
 @Table(name = "flight")
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "flight_number", nullable = false)
+    @Column(name = "flight_number")
     private String flightNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "departure", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "departure_airport")
     private Airport departureAirport;
 
-    @ManyToOne
-    @JoinColumn(name = "destination", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "arrival_airport")
     private Airport arrivalAirport;
 
     @Column(name = "departure_time")

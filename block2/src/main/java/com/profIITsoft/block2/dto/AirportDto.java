@@ -1,0 +1,24 @@
+package com.profIITsoft.block2.dto;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.extern.jackson.Jacksonized;
+
+/**
+ * Airport DTO class to hold airport details data
+ */
+@Getter
+@Builder
+@Jacksonized
+public class AirportDto {
+
+    private String airportCode;
+
+    private String name;
+
+    private String city;
+
+    private String country;
+
+    private String timezone;
+}

@@ -1,7 +1,8 @@
 package com.profIITsoft.block2.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
@@ -12,15 +13,15 @@ import java.util.Set;
 @Table(name = "airport")
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Airport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "airport_code", nullable = false)
+    /**
+     * Airport code. Unique value.
+     */
+    @Column(name = "airport_code")
     private String airportCode;
 
     @Column(name = "name")
@@ -34,10 +35,4 @@ public class Airport {
 
     @Column(name = "timezone")
     private String timezone;
-
-    @OneToMany(mappedBy = "departureAirport")
-    private Set<Flight> departures;
-
-    @OneToMany(mappedBy = "arrivalAirport")
-    private Set<Flight> arrivals;
 }

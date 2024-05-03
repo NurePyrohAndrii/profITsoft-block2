@@ -2,6 +2,8 @@ package com.profIITsoft.block2.service;
 
 import com.profIITsoft.block2.dto.FlightDetailsDto;
 import com.profIITsoft.block2.dto.FlightDto;
+import com.profIITsoft.block2.dto.FlightListRequest;
+import com.profIITsoft.block2.dto.UploadResponse;
 import com.profIITsoft.block2.entity.Airport;
 import com.profIITsoft.block2.entity.Flight;
 import com.profIITsoft.block2.entity.Service;
@@ -12,11 +14,17 @@ import com.profIITsoft.block2.exception.ServiceNotFoundException;
 import com.profIITsoft.block2.mapper.FlightDetailsDtoMapper;
 import com.profIITsoft.block2.mapper.FlightDtoMapper;
 import com.profIITsoft.block2.repository.FlightRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Flight service class to manage flights
@@ -30,6 +38,7 @@ public class FlightService {
     private final ServiceService serviceService;
     private final FlightDtoMapper flightDtoMapper;
     private final FlightDetailsDtoMapper flightDetailsDtoMapper;
+    private final FlightJsonParser flightJsonParser;
 
     /**
      * Save a new flight with the provided details.
@@ -37,6 +46,7 @@ public class FlightService {
      * @param flightDto flight DTO
      * @return flight details DTO
      */
+    @Transactional
     public FlightDetailsDto saveFlight(FlightDto flightDto) {
         // validate the flight request
         FlightRequestValidationResult result = getFlightRequestValidationResult(flightDto);
@@ -77,12 +87,49 @@ public class FlightService {
     }
 
     /**
+     * List flights based on the provided filters and pagination info.
+     *
+     * @param flightListRequest flight list request
+     * @param pageable          pageable
+     * @return page of flight DTOs
+     */
+    public Page<FlightDto> listFlights(FlightListRequest flightListRequest, Pageable pageable) {
+        Set<Airport> airports = airportService.findAirportsByCodes(
+                flightListRequest.getDepartureAirport(),
+                flightListRequest.getArrivalAirport()
+        );
+
+        Optional<Airport> departureAirport = airports.stream().findFirst();
+        Optional<Airport> arrivalAirport = airports.stream().skip(1).findFirst();
+
+        Set<String> services = flightListRequest.getServices();
+        Set<Service> requestedServices;
+
+        if (services != null) {
+            requestedServices = serviceService.findServicesByNames(services);
+            if (requestedServices.size() != services.size()) {
+                throw new ServiceNotFoundException("not.found.services");
+            }
+        } else {
+            requestedServices = Set.of();
+        }
+
+        return flightRepository.findByFilters(
+                        departureAirport.map(Airport::getId).orElse(null),
+                        arrivalAirport.map(Airport::getId).orElse(null),
+                        !requestedServices.isEmpty() ? requestedServices.stream().map(Service::getId).collect(Collectors.toSet()) : null,
+                        pageable)
+                .map(flightDtoMapper::toFlightDto);
+    }
+
+    /**
      * Update the details of a flight with the provided flightId.
      *
-     * @param flightId flight ID
+     * @param flightId  flight ID
      * @param flightDto flight DTO
      * @return flight details DTO
      */
+    @Transactional
     public FlightDetailsDto updateFlight(Long flightId, FlightDto flightDto) {
         // validate the flight request
         FlightRequestValidationResult result = getFlightRequestValidationResult(flightDto);
@@ -95,7 +142,7 @@ public class FlightService {
                 result.arrivalTime()
         );
 
-        // ensure that flight with the requested scheduling does not exist or it is the same flight
+        // ensure that flight with the requested scheduling does not exist, or it is the same flight
         if (flightWithRequestedScheduling.isPresent() && !flightWithRequestedScheduling.get().getId().equals(flightId)) {
             throw new FlightScheduleException("invalid.update.flight");
         }
@@ -119,6 +166,7 @@ public class FlightService {
      *
      * @param flightId flight ID
      */
+    @Transactional
     public void deleteFlight(Long flightId) {
         // ensure that the flight exists
         if (!flightRepository.existsById(flightId)) {
@@ -127,6 +175,38 @@ public class FlightService {
 
         // delete the flight
         flightRepository.deleteById(flightId);
+    }
+
+    /**
+     * Upload flights from the provided file and save them in the database.
+     *
+     * @param file file containing flights
+     * @return upload response
+     */
+    @Transactional
+    public UploadResponse uploadFlights(MultipartFile file) throws Exception {
+        // parse the flights from the file
+        FlightJsonParser.ParseResult flightsParseResult = flightJsonParser.parseFlights(file);
+
+        // save the flights in the database
+        List<FlightDto> flights = flightsParseResult.flights();
+        int succeeded = flightsParseResult.succeeded();
+        int failed = flightsParseResult.failed();
+
+        for (FlightDto flight : flights) {
+            try {
+                saveFlight(flight);
+            } catch (Exception e) {
+                succeeded--;
+                failed++;
+            }
+        }
+
+        // return the upload response
+        return UploadResponse.builder()
+                .succeeded(String.valueOf(succeeded))
+                .failed(String.valueOf(failed))
+                .build();
     }
 
     /**
@@ -162,10 +242,11 @@ public class FlightService {
         }
         return new FlightRequestValidationResult(departureTime, arrivalTime, airports, services);
     }
-
+    
     /**
      * Private record to hold the result of the flight request validation
      */
     private record FlightRequestValidationResult(Instant departureTime, Instant arrivalTime, Set<Airport> airports,
-                                                 Set<Service> services) {}
+                                                 Set<Service> services) {
+    }
 }

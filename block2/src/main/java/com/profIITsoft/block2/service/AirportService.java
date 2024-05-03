@@ -5,6 +5,7 @@ import com.profIITsoft.block2.repository.AirportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,7 +25,10 @@ public class AirportService {
      * @return set of airports
      */
     public Set<Airport> findAirportsByCodes(String departureCode, String arrivalCode) {
-        return airportRepository.findByAirportCodeIn(Set.of(departureCode, arrivalCode));
+        Set<String> airportCodes = new HashSet<>();
+        airportCodes.add(departureCode);
+        airportCodes.add(arrivalCode);
+        return airportRepository.findByAirportCodeIn(airportCodes);
     }
 
 }

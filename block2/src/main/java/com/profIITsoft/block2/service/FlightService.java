@@ -242,7 +242,7 @@ public class FlightService {
         }
         return new FlightRequestValidationResult(departureTime, arrivalTime, airports, services);
     }
-    
+
     /**
      * Private record to hold the result of the flight request validation
      */

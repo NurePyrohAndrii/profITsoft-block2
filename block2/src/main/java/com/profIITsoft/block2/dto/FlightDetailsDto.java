@@ -19,9 +19,9 @@ public class FlightDetailsDto {
 
     private String flightNumber;
 
-    private AirportDto departureAirport;
+    private AirportDetailsDto departureAirport;
 
-    private AirportDto arrivalAirport;
+    private AirportDetailsDto arrivalAirport;
 
     private String departureTime;
 

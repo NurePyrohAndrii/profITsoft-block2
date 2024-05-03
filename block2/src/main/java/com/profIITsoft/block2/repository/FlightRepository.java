@@ -5,6 +5,7 @@ import com.profIITsoft.block2.entity.Flight;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -62,9 +63,9 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     /**
      * Find flights by provided filters
      *
-     * @param departureAirport departure airport code
-     * @param arrivalAirport arrival airport code
-     * @param serviceNames service names
+     * @param departureAirportId departure airport id to filter by
+     * @param arrivalAirportId arrival airport id to filter by
+     * @param serviceIds service ids to filter by
      * @param pageable pagination information
      * @return page of flights matching the provided filters
      */
@@ -82,4 +83,5 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             @Param("arrivalAirportId") Long arrivalAirportId,
             @Param("serviceIds") Set<Long> serviceIds,
             Pageable pageable);
+
 }

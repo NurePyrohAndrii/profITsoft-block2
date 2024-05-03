@@ -35,4 +35,10 @@ public class Airport {
 
     @Column(name = "timezone")
     private String timezone;
+
+    @OneToMany(mappedBy = "departureAirport", cascade = CascadeType.REMOVE)
+    private Set<Flight> flightsDeparting;
+
+    @OneToMany(mappedBy = "arrivalAirport", cascade = CascadeType.REMOVE)
+    private Set<Flight> flightsArriving;
 }

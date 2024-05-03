@@ -1,23 +1,21 @@
 package com.profIITsoft.block2.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Airport DTO class to hold airport creation and update details data
+ * Airport DTO class to hold airport details data
  */
 @Getter
 @Builder
 @Jacksonized
-public class AirportDto {
+public class AirportDetailsDto {
 
-    @Pattern(regexp = "^[A-Za-z]{3}$", message = "invalid.airport.code")
+    private Long id;
+
     private String airportCode;
 
-    @NotBlank(message = "not.blank.name")
     private String name;
 
     private String city;

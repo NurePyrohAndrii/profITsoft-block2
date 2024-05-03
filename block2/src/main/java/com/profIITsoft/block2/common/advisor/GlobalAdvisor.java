@@ -4,6 +4,7 @@ import com.profIITsoft.block2.common.response.ApiError;
 import com.profIITsoft.block2.common.response.ApiResponse;
 import com.profIITsoft.block2.common.util.AdvisorUtils;
 import com.profIITsoft.block2.common.util.MessageSourceUtils;
+import com.profIITsoft.block2.exception.ResourceDuplicateException;
 import com.profIITsoft.block2.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -82,4 +83,16 @@ public class GlobalAdvisor {
     public ResponseEntity<ApiResponse<List<ApiError>>> handleResourceNotFoundException(ResourceNotFoundException e) {
         return advisorUtils.createErrorResponseEntity(e, HttpStatus.NOT_FOUND);
     }
+
+    /**
+     * Handle resource duplicate exception that occurs when the same resource already exists.
+     *
+     * @param e the exception object of type {@link ResourceDuplicateException}
+     * @return the response entity with the list of errors
+     */
+    @ExceptionHandler(ResourceDuplicateException.class)
+    public ResponseEntity<ApiResponse<List<ApiError>>> handleResourceDuplicateException(ResourceDuplicateException e) {
+        return advisorUtils.createErrorResponseEntity(e, HttpStatus.CONFLICT);
+    }
+
 }

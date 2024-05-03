@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Builder
 @Jacksonized
-public class FlightSaveDto {
+public class FlightDto {
 
     /**
      * Number of the flight

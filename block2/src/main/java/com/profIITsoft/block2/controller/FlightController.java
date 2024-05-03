@@ -2,7 +2,7 @@ package com.profIITsoft.block2.controller;
 
 import com.profIITsoft.block2.common.response.ApiResponse;
 import com.profIITsoft.block2.dto.FlightDetailsDto;
-import com.profIITsoft.block2.dto.FlightSaveDto;
+import com.profIITsoft.block2.dto.FlightDto;
 import com.profIITsoft.block2.service.FlightService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +25,16 @@ public class FlightController {
     /**
      * Save a flight with the provided details in flightSaveDto.
      *
-     * @param flightSaveDto flight save DTO
+     * @param flightDto flight save DTO
      * @return flight details DTO
      */
     @PostMapping
     public ResponseEntity<ApiResponse<FlightDetailsDto>> saveFlight(
-            @RequestBody @Valid FlightSaveDto flightSaveDto
+            @RequestBody @Valid FlightDto flightDto
     ) {
-        Long createdFlightId = flightService.saveFlight(flightSaveDto);
-        return ResponseEntity.created(URI.create("api/flights/" + createdFlightId))
-                .body(ApiResponse.success(null, HttpStatus.CREATED.value()));
+        FlightDetailsDto createdFlight = flightService.saveFlight(flightDto);
+        return ResponseEntity.created(URI.create("api/flights/" + createdFlight.getId()))
+                .body(ApiResponse.success(createdFlight, HttpStatus.CREATED.value()));
     }
 
     /**
@@ -48,6 +48,35 @@ public class FlightController {
             @PathVariable Long flightId
     ) {
         return ResponseEntity.ok(ApiResponse.success(flightService.getFlightDetails(flightId), HttpStatus.OK.value()));
+    }
+
+    /**
+     * Update a flight with the provided details in flightSaveDto.
+     *
+     * @param flightDto flight save DTO
+     * @return flight details DTO
+     */
+    @PutMapping("/{flightId}")
+    public ResponseEntity<ApiResponse<FlightDetailsDto>> updateFlight(
+            @PathVariable Long flightId,
+            @RequestBody @Valid FlightDto flightDto
+    ) {
+        FlightDetailsDto updatedFlight = flightService.updateFlight(flightId, flightDto);
+        return ResponseEntity.ok(ApiResponse.success(updatedFlight, HttpStatus.OK.value()));
+    }
+
+    /**
+     * Delete a flight by flightId.
+     *
+     * @param flightId flight ID
+     * @return flight details DTO
+     */
+    @DeleteMapping("/{flightId}")
+    public ResponseEntity<ApiResponse<Void>> deleteFlight(
+            @PathVariable Long flightId
+    ) {
+        flightService.deleteFlight(flightId);
+        return ResponseEntity.ok(ApiResponse.success(null, HttpStatus.OK.value()));
     }
 
 }

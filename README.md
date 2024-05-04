@@ -1,4 +1,4 @@
-## Follow steps to successfuly run project
+## Follow steps to successfuly run the project
 
 - Open docker 
 - Clone project

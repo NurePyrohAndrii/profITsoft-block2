@@ -22,11 +22,11 @@ public class Flight {
     @Column(name = "flight_number")
     private String flightNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "departure_airport")
     private Airport departureAirport;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "arrival_airport")
     private Airport arrivalAirport;
 

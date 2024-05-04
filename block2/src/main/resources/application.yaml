@@ -6,7 +6,6 @@ spring:
     url: jdbc:postgresql://localhost:15432/flights
     username: block2_user
     password: password
-    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:

@@ -76,7 +76,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
         JOIN f.services s
         WHERE (:departureAirportId IS NULL OR da.id = :departureAirportId)
           AND (:arrivalAirportId IS NULL OR aa.id = :arrivalAirportId)
-          AND (coalesce(:serviceIds, null) IS NULL OR s.id IN :serviceIds)
+          AND (:serviceIds IS NULL OR s.id IN :serviceIds)
         """)
     Page<Flight> findByFilters(
             @Param("departureAirportId") Long departureAirportId,
@@ -84,4 +84,11 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             @Param("serviceIds") Set<Long> serviceIds,
             Pageable pageable);
 
+    /**
+     * Find a flight by its flight number
+     *
+     * @param number flight number
+     * @return flight with the provided flight number, if found
+     */
+    Optional<Flight> findByFlightNumber(String number);
 }

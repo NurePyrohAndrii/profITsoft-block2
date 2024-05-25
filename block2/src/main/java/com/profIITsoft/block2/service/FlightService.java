@@ -1,9 +1,6 @@
 package com.profIITsoft.block2.service;
 
-import com.profIITsoft.block2.dto.FlightDetailsDto;
-import com.profIITsoft.block2.dto.FlightDto;
-import com.profIITsoft.block2.dto.FlightListRequest;
-import com.profIITsoft.block2.dto.UploadResponse;
+import com.profIITsoft.block2.dto.*;
 import com.profIITsoft.block2.entity.Airport;
 import com.profIITsoft.block2.entity.Flight;
 import com.profIITsoft.block2.entity.Service;
@@ -93,7 +90,7 @@ public class FlightService {
      * @param pageable          pageable
      * @return page of flight DTOs
      */
-    public Page<FlightDto> listFlights(FlightListRequest flightListRequest, Pageable pageable) {
+    public Page<ListFlightDto> listFlights(FlightListRequest flightListRequest, Pageable pageable) {
         Set<Airport> airports = airportService.findAirportsByCodes(
                 flightListRequest.getDepartureAirport(),
                 flightListRequest.getArrivalAirport()
@@ -119,7 +116,7 @@ public class FlightService {
                         arrivalAirport.map(Airport::getId).orElse(null),
                         !requestedServices.isEmpty() ? requestedServices.stream().map(Service::getId).collect(Collectors.toSet()) : null,
                         pageable)
-                .map(flightDtoMapper::toFlightDto);
+                .map(flightDtoMapper::toListFlightDto);
     }
 
     /**

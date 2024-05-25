@@ -1,6 +1,7 @@
 package com.profIITsoft.block2.mapper;
 
 import com.profIITsoft.block2.dto.FlightDto;
+import com.profIITsoft.block2.dto.ListFlightDto;
 import com.profIITsoft.block2.entity.Airport;
 import com.profIITsoft.block2.entity.Flight;
 import com.profIITsoft.block2.entity.Service;
@@ -47,8 +48,9 @@ public class FlightDtoMapper {
      * @param flight flight entity
      * @return flight DTO
      */
-    public FlightDto toFlightDto(Flight flight) {
-        return FlightDto.builder()
+    public ListFlightDto toListFlightDto(Flight flight) {
+        return ListFlightDto.builder()
+                .id(flight.getId())
                 .flightNumber(flight.getFlightNumber())
                 .departureAirport(flight.getDepartureAirport().getAirportCode())
                 .arrivalAirport(flight.getArrivalAirport().getAirportCode())

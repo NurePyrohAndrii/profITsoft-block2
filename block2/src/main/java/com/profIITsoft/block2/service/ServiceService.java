@@ -1,9 +1,11 @@
 package com.profIITsoft.block2.service;
 
+import com.profIITsoft.block2.dto.ServiceDto;
 import com.profIITsoft.block2.entity.Service;
 import com.profIITsoft.block2.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,5 +19,13 @@ public class ServiceService {
 
     public Set<Service> findServicesByNames(Set<String> services) {
         return serviceRepository.findByNameIn(services);
+    }
+
+    public List<ServiceDto> getServices() {
+        return serviceRepository.findAll().stream()
+                .map(service -> ServiceDto.builder()
+                        .name(service.getName())
+                        .build())
+                .toList();
     }
 }

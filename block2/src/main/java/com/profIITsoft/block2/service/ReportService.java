@@ -1,6 +1,7 @@
 package com.profIITsoft.block2.service;
 
 import com.profIITsoft.block2.dto.FlightDto;
+import com.profIITsoft.block2.dto.ListFlightDto;
 import org.springframework.stereotype.Service;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -23,17 +24,18 @@ public class ReportService {
      * @return CSV report
      * @throws IOException if an I/O error occurs
      */
-    public byte[] generateCsvReport(List<FlightDto> flights) throws IOException {
+    public byte[] generateCsvReport(List<ListFlightDto> flights) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PrintWriter printer = new PrintWriter(out);
 
         CSVFormat format = CSVFormat.DEFAULT.builder()
-                .setHeader("Flight Number", "Departure Airport", "Arrival Airport", "Departure Time", "Arrival Time")
+                .setHeader("ID", "Flight Number", "Departure Airport", "Arrival Airport", "Departure Time", "Arrival Time")
                 .build();
 
         try (CSVPrinter csvPrinter = new CSVPrinter(printer, format)) {
-            for (FlightDto flight : flights) {
+            for (ListFlightDto flight : flights) {
                 csvPrinter.printRecord(
+                        flight.getId(),
                         flight.getFlightNumber(),
                         flight.getDepartureAirport(),
                         flight.getArrivalAirport(),

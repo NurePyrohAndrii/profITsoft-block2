@@ -68,11 +68,11 @@ public class FlightController {
      * @return list of flight details DTO
      */
     @PostMapping("/_list")
-    public ResponseEntity<ApiResponse<PageResponse<List<FlightDto>>>> listFlights(
+    public ResponseEntity<ApiResponse<PageResponse<List<ListFlightDto>>>> listFlights(
             @RequestBody @Valid FlightListRequest flightListRequest
     ) {
         Pageable pageable = PageRequest.of(flightListRequest.getPage(), flightListRequest.getSize());
-        Page<FlightDto> flights = flightService.listFlights(flightListRequest, pageable);
+        Page<ListFlightDto> flights = flightService.listFlights(flightListRequest, pageable);
         return ResponseEntity.ok()
                 .headers(paginationHeadersUtils.createPaginationHeaders(flights, pageable))
                 .body(ApiResponse.success(PageResponse.of(flights), HttpStatus.OK.value()));
@@ -127,7 +127,7 @@ public class FlightController {
                 .size(0)
                 .build();
 
-        List<FlightDto> flights = flightService.listFlights(flightListRequest, Pageable.unpaged()).getContent();
+        List<ListFlightDto> flights = flightService.listFlights(flightListRequest, Pageable.unpaged()).getContent();
         byte[] csvContent;
         try {
             csvContent = reportService.generateCsvReport(flights);

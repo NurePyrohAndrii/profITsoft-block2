@@ -60,3 +60,4 @@ volumes:
 networks:
   flights-block5_1_external:
     external: true
+    driver: bridge

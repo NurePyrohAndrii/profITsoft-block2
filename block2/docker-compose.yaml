@@ -3,6 +3,24 @@ version: '3.9'
 name: flights-block2
 
 services:
+  block2.flightservice:
+    image: flightservice:0.0.1
+    container_name: block2-flight-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+    depends_on:
+      block2.db:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT= 8181
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://block2.db/flights
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - flights-block5_1_external
+
   block2.db:
     image: postgres:16.2
     container_name: block2-db
@@ -19,6 +37,8 @@ services:
       - "15432:5432"
     volumes:
       - block2_db_data:/var/lib/postgresql/data
+    networks:
+      - flights-block5_1_external
     restart: unless-stopped
 
   block2.admin:
@@ -36,3 +56,7 @@ services:
 volumes:
   block2_db_data:
   block2_pg_data:
+  
+networks:
+  flights-block5_1_external:
+    external: true

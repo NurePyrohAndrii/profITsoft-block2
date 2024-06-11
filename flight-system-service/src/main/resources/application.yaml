@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: flights-block2
+
+  datasource:
+    url: jdbc:postgresql://localhost:15432/flights
+    username: block2_user
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    enabled: true
+    drop-first: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+
+  kafka:
+    producer:
+      properties:
+        spring:
+          json:
+            type:
+              mapping: SendMailMessage:com.profITsoft.flightsystem.messaging.SendMailMessage
+      client-id: ${spring.application.name}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+kafka:
+  topic:
+    mail: mail
+
+# CORS configuration
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
+  exposed-headers: "*"
+
+logging:
+  level:
+    org:
+      springframework:
+        dao: DEBUG
+

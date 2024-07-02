@@ -35,8 +35,8 @@ spring:
 
   cloud:
     consul:
-      host: consul
-      port: 8500
+      host: ${CONSUL_HOST}
+      port: ${CONSUL_PORT}
       discovery:
         health-check-path: /health
         service-name: ${spring.application.name}

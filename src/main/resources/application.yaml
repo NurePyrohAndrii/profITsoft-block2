@@ -40,6 +40,7 @@ spring:
       discovery:
         health-check-path: /health
         service-name: ${spring.application.name}
+        hostname: ${HOSTNAME}
 
 kafka:
   topic:

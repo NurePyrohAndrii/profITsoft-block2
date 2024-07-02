@@ -1,10 +1,10 @@
 spring:
   application:
-    name: flights-block2
+    name: service-flight-system
 
   datasource:
-    url: jdbc:postgresql://localhost:15432/flights
-    username: block2_user
+    url: jdbc:postgresql://localhost:15432/flight-system
+    username: system_user
     password: password
 
   jpa:
@@ -34,9 +34,31 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+  config:
+    import: optional:consul:/
+
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+      discovery:
+        health-check-path: /health
+        service-name: ${spring.application.name}
+
+
 kafka:
   topic:
     mail: mail
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: "*"
 
 # CORS configuration
 cors:

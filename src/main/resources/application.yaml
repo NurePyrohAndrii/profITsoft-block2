@@ -19,17 +19,6 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     default-schema: public
 
-  kafka:
-    producer:
-      properties:
-        spring:
-          json:
-            type:
-              mapping: SendMailMessage:com.profITsoft.flightsystem.messaging.SendMailMessage
-      client-id: ${spring.application.name}
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
   config:
     import: optional:consul:/
 
@@ -41,10 +30,6 @@ spring:
         health-check-path: /health
         service-name: ${spring.application.name}
         hostname: ${HOSTNAME}
-
-kafka:
-  topic:
-    mail: mail
 
 management:
   endpoint:

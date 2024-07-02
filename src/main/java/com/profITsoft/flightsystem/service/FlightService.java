@@ -10,14 +10,11 @@ import com.profITsoft.flightsystem.exception.FlightScheduleException;
 import com.profITsoft.flightsystem.exception.ServiceNotFoundException;
 import com.profITsoft.flightsystem.mapper.FlightDetailsDtoMapper;
 import com.profITsoft.flightsystem.mapper.FlightDtoMapper;
-import com.profITsoft.flightsystem.messaging.SendMailMessage;
 import com.profITsoft.flightsystem.repository.FlightRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
@@ -33,16 +30,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FlightService {
 
-    @Value("${kafka.topic.mail}")
-    private String mailTopic;
-
     private final FlightRepository flightRepository;
     private final AirportService airportService;
     private final ServiceService serviceService;
     private final FlightDtoMapper flightDtoMapper;
     private final FlightDetailsDtoMapper flightDetailsDtoMapper;
     private final FlightJsonParser flightJsonParser;
-    private final KafkaOperations<String, SendMailMessage> kafkaOperations;
 
     /**
      * Save a new flight with the provided details.
@@ -72,12 +65,6 @@ public class FlightService {
         Flight savedFlight = flightRepository.save(
                 flightDtoMapper.toFlight(flightDto, result.airports(), result.services())
         );
-
-        // send a message to the Kafka topic
-        kafkaOperations.send(mailTopic, SendMailMessage.builder()
-                .subject("Flight created")
-                .text("Flight with number " + savedFlight.getFlightNumber() + " has been created.")
-                .build());
 
         // return the flight details
         return flightDetailsDtoMapper.toFlightDetailsDto(savedFlight);
